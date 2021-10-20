@@ -1,0 +1,19 @@
+{
+  "name": "@amp-nova/aria-codec-commercetools",
+  "version": "1.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@amp-nova/amp-rsa-types": "^1.0.4",
+    "@amp-nova/pbx": "^0.0.83",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.175"
+  }
+}
