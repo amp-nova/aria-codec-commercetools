@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "declaration": true,
+    "baseUrl": "./src",
+    "rootDir": "./src",
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "target": "es6",
+    "module": "commonjs",
+    "lib": ["es2020", "esnext.asynciterable", "ES6", "DOM"],
+    "preserveSymlinks": true
+  },
+  "include": [
+    "src/**/*",
+    "config/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -4,16 +4,19 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc",
+    "prepare": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@amp-nova/amp-rsa-types": "^1.0.4",
-    "@amp-nova/pbx": "^0.0.83",
+    "@amp-nova/aria-types": "^1.0.5",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.175"
+    "@types/lodash": "^4.14.175",
+    "rimraf": "^3.0.2"
   }
 }
