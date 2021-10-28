@@ -339,7 +339,8 @@ class CommerceToolsProductOperation extends CommerceToolsOperation {
 }
 
 const type: CodecType = {
-    key: 'commercetools',
+    vendor: 'commercetools',
+    codecType: 'commerce',
 
     validate: (config: any) => {
         return config && config.credentials &&
