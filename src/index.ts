@@ -2,8 +2,7 @@ import _ from 'lodash'
 import URI from 'urijs'
 import axios from 'axios'
 import currency from 'currency.js'
-import { CodecType, codecManager, CommerceCodec, CodecConfiguration, GetCategoryProductArgs, QueryContext, Operation } from '@amp-nova/aria'
-import { Category, Attribute } from '@amp-nova/aria-types'
+import { Category, Attribute, CodecType, codecManager, CommerceCodec, CodecConfiguration, GetCategoryProductArgs, QueryContext, Operation } from '@amp-nova/aria'
 
 const getAttributeValue = (attributes: Attribute[] = [], name: string) => {
     return _.get(_.find(attributes, att => att.name === name), 'value')
