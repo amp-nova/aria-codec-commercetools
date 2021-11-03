@@ -342,6 +342,8 @@ const type: CodecType = {
     codecType: 'commerce',
 
     validate: (config: any) => {
+        console.log(`validate ${JSON.stringify(config)}`)
+
         return config && config.credentials &&
             config.credentials.client_id &&
             config.credentials.client_secret &&
