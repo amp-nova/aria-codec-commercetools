@@ -8,6 +8,15 @@ const getAttributeValue = (attributes: Attribute[] = [], name: string) => {
     return _.get(_.find(attributes, att => att.name === name), 'value')
 }
 
+export class CommerceToolsCodecConfiguration extends CodecConfiguration {
+    client_id: string
+    client_secret: string
+    oauth_url: string
+    api_url: string
+    project: string
+    scope: string
+}
+
 class CommerceToolsCodec extends CommerceCodec {
     constructor(config: CodecConfiguration) {
         super(config)
@@ -73,8 +82,7 @@ class CommerceToolsOperation extends Operation {
     accessToken?: string
 
     getBaseURL() {
-        console.log(JSON.stringify(this.config))
-        return `${this.config.credentials.api_url}/${this.config.credentials.project}/`
+        return `${(this.config as CommerceToolsCodecConfiguration).api_url}/${(this.config as CommerceToolsCodecConfiguration).project}/`
     }
 
     getRequest(context: QueryContext) {
@@ -124,10 +132,10 @@ class CommerceToolsOperation extends Operation {
     async authenticate() {
         if (!this.accessToken) {
             let response: any = await axios.post(
-                `${this.config.credentials.oauth_url}/oauth/token?grant_type=client_credentials&scope=${_.first(_.split(this.config.credentials.scope, ' '))}`, {}, {
+                `${(this.config as CommerceToolsCodecConfiguration).oauth_url}/oauth/token?grant_type=client_credentials&scope=${_.first(_.split((this.config as CommerceToolsCodecConfiguration).scope, ' '))}`, {}, {
                 auth: {
-                    username: this.config.credentials.client_id,
-                    password: this.config.credentials.client_secret
+                    username: (this.config as CommerceToolsCodecConfiguration).client_id,
+                    password: (this.config as CommerceToolsCodecConfiguration).client_secret
                 }
             })
             this.accessToken = `${response.data.token_type} ${response.data.access_token}`
@@ -342,15 +350,13 @@ const type: CodecType = {
     codecType: 'commerce',
 
     validate: (config: any) => {
-        console.log(`validate ${JSON.stringify(config)}`)
-
-        return config && config.credentials &&
-            config.credentials.client_id &&
-            config.credentials.client_secret &&
-            config.credentials.oauth_url &&
-            config.credentials.api_url &&
-            config.credentials.project &&
-            config.credentials.scope
+        return config &&
+            config.client_id &&
+            config.client_secret &&
+            config.oauth_url &&
+            config.api_url &&
+            config.project &&
+            config.scope
     },
 
     create: (config: CodecConfiguration) => {
