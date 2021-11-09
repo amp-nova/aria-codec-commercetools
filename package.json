@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@amp-nova/aria": "^0.0.116",
+    "@amp-nova/aria": "^0.0.117",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
