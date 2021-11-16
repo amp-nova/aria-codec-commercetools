@@ -55,15 +55,15 @@ class CommerceToolsCodec extends CommerceCodec {
     async getCategory(query: QueryContext) {
         let x: any = _.find(await this.getCategoryHierarchy(query), (c: Category) => c.id === query.args.id || c.slug === query.args.slug)
         if (x && query.args.full) {
-            x.products = await this.getProductsForCategory(x, {})
+            x.products = await this.getProductsForCategory(x, query)
         }
         return x
     }
 
-    async getProductsForCategory(parent: Category, args: GetCategoryProductArgs) {
+    async getProductsForCategory(parent: Category, query: QueryContext) {
         return (await this.productOperation.get(new QueryContext({
+            ...query,
             args: {
-                ...args,
                 filter: `categories.id: subtree("${parent.id}")`
             }
         }))).getResults()
