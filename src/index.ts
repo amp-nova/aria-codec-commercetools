@@ -32,13 +32,10 @@ class CommerceToolsCodec extends CommerceCodec {
         let filter =
             query.args.id && ((c: Category) => c.id === query.args.id) ||
             query.args.slug && ((c: Category) => c.slug === query.args.slug) ||
+            query.args.key && ((c: Category) => c.key === query.args.key) ||
             ((c: Category) => !c.parent?.id)
 
-        // let categories = (await this.categoryOperation.get(query)).getResults()
-        let categories = _.get(await this.categoryOperation.get(query), 'results')
-
-        // console.log(categories)
-
+        let categories = _.get(await this.categoryOperation.get(new QueryContext({ ...query, args: {} })), 'results')
         let populateChildren = (category: Category) => {
             category.children = _.filter(categories, (c: Category) => c.parent && c.parent.id === category.id)
             _.each(category.children, populateChildren)
@@ -53,7 +50,7 @@ class CommerceToolsCodec extends CommerceCodec {
     }
 
     async getCategory(query: QueryContext) {
-        let x: any = _.find(await this.getCategoryHierarchy(query), (c: Category) => c.id === query.args.id || c.slug === query.args.slug)
+        let x: any = _.find(await this.getCategoryHierarchy(query), (c: Category) => c.id === query.args.id || c.slug === query.args.slug || c.key === query.args.key)
         if (x && query.args.full) {
             x.products = await this.getProductsForCategory(x, query)
         }
@@ -63,9 +60,7 @@ class CommerceToolsCodec extends CommerceCodec {
     async getProductsForCategory(parent: Category, query: QueryContext) {
         return (await this.productOperation.get(new QueryContext({
             ...query,
-            args: {
-                filter: `categories.id: subtree("${parent.id}")`
-            }
+            args: { filter: `categories.id: subtree("${parent.id}")` }
         }))).getResults()
     }
 }
@@ -83,6 +78,10 @@ class CommerceToolsOperation extends Operation {
 
     getBaseURL() {
         return `${(this.config as CommerceToolsCodecConfiguration).api_url}/${(this.config as CommerceToolsCodecConfiguration).project}/`
+    }
+
+    getURL(context: QueryContext) {
+        return `${this.getBaseURL()}${this.getRequestPath(context)}`
     }
 
     getRequest(context: QueryContext) {
@@ -147,6 +146,7 @@ class CommerceToolsOperation extends Operation {
         // a commercetools response will be either a single object, or an array in 'results'
         // if it is an array, limit, count, total, and offset are provided on the object
 
+        let r = data.results || [data]
         return {
             meta: data.limit && {
                 limit: data.limit,
@@ -154,7 +154,7 @@ class CommerceToolsOperation extends Operation {
                 offset: data.offset,
                 total: data.total
             },
-            results: await Promise.all((data.results || data).map(await mapper))
+            results: await Promise.all(r.map(await mapper))
         }
     }
 
@@ -173,22 +173,24 @@ class CommerceToolsCategoryOperation extends CommerceToolsOperation {
                 parent: category.parent || {},
                 ancestors: category.ancestors,
                 name: self.localize(category.name, context),
-                slug: self.localize(category.slug, context)
+                slug: self.localize(category.slug, context),
+                key: category.slug.en
             }
         }
     }
 
     getRequestPath(context: QueryContext) {
-        return `categories`
+        return context.args.key ? `categories/key=${context.args.key}` : `categories`
     }
 
     async get(context: QueryContext) {
         return await super.get(new QueryContext({
             ...context,
             args: {
+                ...context.args,
                 limit: 500,
                 where:
-                    context.args.slug && [`slug(${context.args.language || 'en'}="${context.args.slug}") or slug(en="${context.args.slug}")`] ||
+                    context.args.slug && [`slug(${context.language || 'en'}="${context.args.slug}") or slug(en="${context.args.slug}")`] ||
                     context.args.id && [`id="${context.args.id}"`]
             }
         }))
@@ -206,12 +208,13 @@ class CommerceToolsCartDiscountOperation extends CommerceToolsOperation {
 
 // product operation
 class CommerceToolsProductOperation extends CommerceToolsOperation {
-    getURL(context: QueryContext) {
-        return `${this.getBaseURL()}${this.getRequestPath(context)}`
-    }
-
     getRequestPath(context: QueryContext) {
-        return (context.args.keyword || context.args.filter) ? `product-projections/search` : `product-projections`
+        if (context.args.keyword || context.args.filter) {
+            return `product-projections/search`
+        }
+        else {
+            return context.args.key ? `product-projections/key=${context.args.key}` : `product-projections`
+        }
     }
 
     async get(context: QueryContext) {
@@ -301,7 +304,8 @@ class CommerceToolsProductOperation extends CommerceToolsOperation {
                         ancestors: category.ancestors
                     }
                 }),
-                productType: product.productType.id
+                productType: product.productType.id,
+                key: product.slug.en
             }
         }
     }
