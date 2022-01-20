@@ -12,11 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@amp-nova/aria": "^0.0.124",
+    "@amp-nova/aria": "^0.0.125",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.175",
+    "@types/lodash": "^4.14.178",
     "rimraf": "^3.0.2"
   }
 }
