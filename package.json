@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@amp-nova/aria": "^0.0.125",
+    "@amp-nova/aria": "^0.0.127",
     "currency.js": "^2.0.4",
     "lodash": "^4.17.21"
   },

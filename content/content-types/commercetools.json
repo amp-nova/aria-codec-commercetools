@@ -1,0 +1,18 @@
+{
+  "contentTypeUri": "https://amprsa.net/credentials/commercetools",
+  "status": "ACTIVE",
+  "settings": {
+    "label": "Commercetools credentials",
+    "icons": [
+      {
+        "size": 256,
+        "url": "https://pbs.twimg.com/profile_images/1448061457086640132/zm8zxo8N.jpg"
+      }
+    ],
+    "visualizations": [],
+    "cards": []
+  },
+  "repositories": [
+    "sitestructure"
+  ]
+}
